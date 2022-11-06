@@ -1,4 +1,8 @@
-# soch-ai
+# ChequeEasy: Banking with Transformers
+
+ChequeEasy is a project that aims to simply the process of approval of cheques. Leveraging AI to extract relevant data from cheques and make the whole process quicker and easier for both bank officials and bank customers.
+
+
 
 ## Prerequisites:
 
