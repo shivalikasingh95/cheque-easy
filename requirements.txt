@@ -1,0 +1,17 @@
+git+https://github.com/shivalikasingh95/transformers.git@image_utils_fix 
+datasets 
+sentencepiece 
+zenml 
+pytorch-lightning 
+wandb
+"zenml[server]"
+mlflow
+label-studio
+label-studio-sdk
+mysqlclient
+word2number
+gradio
+textblob
+pillow
+nltk
+donut-python
