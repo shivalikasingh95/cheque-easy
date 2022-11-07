@@ -4,7 +4,7 @@ ChequeEasy is a project that aims to simply the process of approval of cheques. 
 
 This project leverages Donut model proposed in the paper [OCR-free Document Understanding Transformer](https://arxiv.org/abs/2111.15664) for the parsing of the required data from cheques.Donut is based on a very simple transformer encoder and decoder architecture. It's main USP is that it is an OCR-free approach to information extraction from documents. OCR based techniques come with several limitations such as use of additional downstream models, lack of understanding about document structure, use of hand crafted rules,etc. Donut helps you get rid of all of these OCR specific limitations. 
 
-The model for the project has been trained using this dataset . This HF dataset is actually a filtered version of this kaggle dataset .
+The model for the project has been trained using this [dataset](https://huggingface.co/datasets/shivi/cheques_sample_data) which is available for use on Hugging Face Hub. This Hugging Face dataset is actually a filtered version of this [Kaggle dataset](https://www.kaggle.com/datasets/medali1992/cheque-images).
 
 
 ## Prerequisites:
@@ -47,7 +47,7 @@ If you don't want to run your mlflow server with a MySQL backend, you can skip t
 At the moment, zenml supports only cloud based artifact stores for use with label-studio as `annotator` component so you if you wish to use the annotation component of this project then you need to have an AWS/GCP/Azure account which will be used for storing the artifacts generated as part of pipelines run using the annotator stack. 
 The below setup has been described for use with Azure but similar set up can be done for AWS/GCP. To see how to setup label studio with zenml using AWS/GCP refer this [link](https://github.com/zenml-io/zenml/tree/main/examples/label_studio_annotation).
 
-For using label studio with Azure, make sure you have an azure storage account and an azure key vault. You can leverage, Zenml's [MLOps stack recipes](https://github.com/zenml-io/mlops-stacks) to do this for you in case you don't have one. For Azure, you can take a look at the [azure-minimal](https://github.com/zenml-io/mlops-stacks/tree/main/azure-minimal) stack. Although this creates a few additional resources apart from Azure Blob Storage & Key vault so you might want to disable that.
+    For using label studio with Azure, make sure you have an azure storage account and an azure key vault. You can leverage, Zenml's [MLOps stack recipes](https://github.com/zenml-io/mlops-stacks) to do this for you in case you don't have one. For Azure, you can take a look at the [azure-minimal](https://github.com/zenml-io/mlops-stacks/tree/main/azure-minimal) stack. Although this creates a few additional resources apart from Azure Blob Storage & Key vault so you might want to disable that.
 
 3. If you want to set up the stack for labelling using label studio, you need to setup the following environment variables:
     - **ANNOT_STACK_NAME:** Name to assign to the zenml stack that will be used for labelling.
