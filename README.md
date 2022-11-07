@@ -2,7 +2,7 @@
 
 ChequeEasy is a project that aims to simply the process of approval of cheques. Leveraging recent advances in Visual Document Understanding (VDU) domain to extract relevant data from cheques and make the whole process quicker and easier for both bank officials and customers. 
 
-This project leverages Donut model proposed in this paper for the parsing of the required data from cheques.Donut is based on a very simple transformer encoder and decoder architecture. It's main USP is that it is an OCR-free approach to information extraction from documents. OCR based techniques come with several limitations such as use of additional downstream models, lack of understanding about document structure, use of hand crafted rules,etc. Donut helps you get rid of all of these OCR specific limitations. 
+This project leverages Donut model proposed in the paper [OCR-free Document Understanding Transformer](https://arxiv.org/abs/2111.15664) for the parsing of the required data from cheques.Donut is based on a very simple transformer encoder and decoder architecture. It's main USP is that it is an OCR-free approach to information extraction from documents. OCR based techniques come with several limitations such as use of additional downstream models, lack of understanding about document structure, use of hand crafted rules,etc. Donut helps you get rid of all of these OCR specific limitations. 
 
 The model for the project has been trained using this dataset . This HF dataset is actually a filtered version of this kaggle dataset .
 
@@ -34,14 +34,14 @@ The following dependencies must be installed if you want to run the gradio demo 
 
 2. Install all system level dependencies. 
 
-- This is for being able to connect to the MySQL server which will be used by mlflow as a backend store to keep track of all experiments runs, metadata, etc.
+This is for being able to connect to the MySQL server which will be used by mlflow as a backend store to keep track of all experiments runs, metadata, etc.
 
 ```shell
 sudo apt-get update
 
 sudo apt-get install python3.9-dev default-libmysqlclient-dev build-essential`
 ```
-- If you don't want to run your mlflow server with a MySQL backend, you can skip this step.
+If you don't want to run your mlflow server with a MySQL backend, you can skip this step.
 
 2. Cloud resources:
 At the moment, zenml supports only cloud based artifact stores for use with label-studio as `annotator` component so you if you wish to use the annotation component of this project then you need to have an AWS/GCP/Azure account which will be used for storing the artifacts generated as part of pipelines run using the annotator stack. 
@@ -49,8 +49,7 @@ The below setup has been described for use with Azure but similar set up can be 
 
 For using label studio with Azure, make sure you have an azure storage account and an azure key vault. You can leverage, Zenml's [MLOps stack recipes](https://github.com/zenml-io/mlops-stacks) to do this for you in case you don't have one. For Azure, you can take a look at the [azure-minimal](https://github.com/zenml-io/mlops-stacks/tree/main/azure-minimal) stack. Although this creates a few additional resources apart from Azure Blob Storage & Key vault so you might want to disable that.
 
-
-If you want to set up the stack for labelling using label studio, you need to setup the following environment variables:
+3. If you want to set up the stack for labelling using label studio, you need to setup the following environment variables:
     - **ANNOT_STACK_NAME:** Name to assign to the zenml stack that will be used for labelling.
     - **AZURE_KEY_VAULT:** Name of the key vault that will be used as secrets-manager for your stack.
     - **STORAGE_ACCOUNT:** This is the name of the Azure storage account which contains the bucket that can be used by ZenML as an artifact store.
@@ -58,7 +57,7 @@ If you want to set up the stack for labelling using label studio, you need to se
     - **STORAGE_ACCOUNT_KEY:** This refers to the access token value for the azure storage account. 
     - **LABEL_STUDIO_API_KEY:** This refers to the `Access Token` of your label studio instance. You'll to have first start your label studio instance using the command - `label studio start -p 8094` and go to Account page to retrieve your Access Token value to set this environment variable.
 
-3. If you want to set up the stack for training and inference, you need to setup the following environment variables:
+4. If you want to set up the stack for training and inference, you need to setup the following environment variables:
     - **TRAIN_STACK_NAME:** Name to assign to the zenml stack that will be used for labelling.
     - **MLFLOW_TRACKING_URI:** Name of the key vault that will be used as secrets-manager for your stack.
     - **MLFLOW_USERNAME:** This is the name of the Azure storage account which contains the bucket that can be used by ZenML as an artifact store.
