@@ -113,22 +113,3 @@ if __name__ == "__main__":
         train_pipeline.run()
     elif args.pipeline_type == INFERENCE_CHOICE:
         inference_pipeline.run()
-
-
-# model_deployer = MLFlowModelDeployer.get_active_model_deployer()
-
-# # fetch existing services with same pipeline name, step name and model name
-# service = model_deployer.find_model_server(
-#     pipeline_name="train_donut_pipeline",
-#     pipeline_step_name="mlflow_model_deployer_step",
-#     running=True,
-# )
-
-# if service[0]:
-#     print(
-#         f"The MLflow prediction server is running locally as a daemon process "
-#         f"and accepts inference requests at:\n"
-#         f"    {service[0].prediction_url}\n"
-#         f"To stop the service, re-run the same command and supply the "
-#         f"`--stop-service` argument."
-#     )

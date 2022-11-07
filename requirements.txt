@@ -8,10 +8,10 @@ wandb
 mlflow
 label-studio
 label-studio-sdk
+pillow
+donut-python
 mysqlclient
+nltk
 word2number
 gradio
 textblob
-pillow
-nltk
-donut-python
