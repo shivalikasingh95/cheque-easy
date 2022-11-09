@@ -15,9 +15,9 @@ def train_donut_pipeline(
     load_model, 
     # create_pytorch_dataset,
     train_donut_model,
-    evaluator,
-    deployment_trigger,
-    model_deployer
+    evaluator
+    # deployment_trigger,
+    # model_deployer
 ):
     # dataset = importer()
     config = load_config()

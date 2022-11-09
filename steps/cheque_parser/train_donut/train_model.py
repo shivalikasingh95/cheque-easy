@@ -1,7 +1,7 @@
-from zenml.steps import step
+from zenml.steps import step, Output
 from typing import Dict
 from torch.utils.data import DataLoader
-from transformers import DonutProcessor, VisionEncoderDecoderModel
+from transformers import DonutProcessor, VisionEncoderDecoderModel, PreTrainedModel
 from .utils.pl_module import DonutModelPLModule
 from pytorch_lightning.callbacks import Callback
 from params import DonutTrainParams, ModelSaveDeployParams
@@ -16,6 +16,8 @@ import mlflow
 import os, pathlib
 import pytorch_lightning as pl
 from .create_pt_dataset import DonutDataset
+from datasets import load_dataset
+from .materializers.donut_processor_materializer import HFDonutMaterializer
 
 experiment_tracker = Client().active_stack.experiment_tracker
 
@@ -86,7 +88,7 @@ class PushToHubCallback(Callback):
 # @step(experiment_tracker="wandb_tracker")
 # @step(experiment_tracker=experiment_tracker.name)
 
-@step(enable_cache=False, experiment_tracker=experiment_tracker.name,
+@step(enable_cache=False,output_materializers=HFDonutMaterializer, experiment_tracker=experiment_tracker.name,
     settings={
         "experiment_tracker.mlflow": MLFlowExperimentTrackerSettings(
             experiment_name=EXPERIMENT_NAME,
@@ -98,7 +100,7 @@ def train_evaluate_donut(params: DonutTrainParams,
                 model: VisionEncoderDecoderModel,
                 # train_dataloader: DataLoader,
                 # val_dataloader: DataLoader
-                ) --> Output(trained_model=VisionEncoderDecoderModel,
+                ) -> Output(trained_model=PreTrainedModel,
                 processor_donut=DonutProcessor): #> Dict:
 
     train_dataset = load_dataset(params.dataset, split='train[0:30]')

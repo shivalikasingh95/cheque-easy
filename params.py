@@ -24,11 +24,11 @@ class DonutTrainParams(BaseParameters):
     dataset = "shivi/cheques_sample_data"
     image_size = [960, 720] # image size for encoder
     max_length = 768 # decoder seq length
-    task_start_token="<s_cord-v2>"
-    task_end_token="<s_cord-v2>"
+    task_start_token="<parse-cheque>"
+    task_end_token="<parse-cheque>"
     
     batch_size = 1
-    num_workers = 1
+    num_workers = 4
     epochs = 1
     max_epochs = 1
     val_check_interval = 0.2 # how many times we want to validate during an epoch
