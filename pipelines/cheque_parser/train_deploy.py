@@ -31,4 +31,4 @@ def train_donut_pipeline(
 
     accuracy = evaluator(artifacts)
     deployment_decision = deployment_trigger(accuracy)
-    model_deployer(deployment_decision, model)
+    model_deployer(deployment_decision, artifacts)

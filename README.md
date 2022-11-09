@@ -40,7 +40,7 @@ This is for being able to connect to the MySQL server which will be used by mlfl
 ```shell
 sudo apt-get update
 
-sudo apt-get install python3.9-dev default-libmysqlclient-dev build-essential`
+sudo apt-get install python3-dev default-libmysqlclient-dev build-essential`
 ```
 If you don't want to run your mlflow server with a MySQL backend, you can skip this step.
 
@@ -74,7 +74,7 @@ To download the original Kaggle dataset you need to follow the below steps.
 
 - Install the kaggle library:
 ```shell
-    pip install kaggle
+    pip install -q kaggle
 ```
 - You can now run the below command in your console to verify that your setup is working correctly.
 ```shell

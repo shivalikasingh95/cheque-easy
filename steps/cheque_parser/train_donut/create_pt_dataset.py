@@ -133,9 +133,6 @@ class DonutDataset(Dataset):
             labels : masked labels (model doesn't need to predict prompt and pad token)
         """
         sample = self.dataset[idx]
-        print("sample:",sample)
-        # print('sample["image"]:',sample["image"].shape)
-        # inputs
         pixel_values = self.processor(sample["image"], random_padding=self.split == "train", return_tensors="pt").pixel_values
         pixel_values = pixel_values.squeeze()
 
@@ -156,31 +153,24 @@ class DonutDataset(Dataset):
         return pixel_values, labels, target_sequence
 
 
-@step(enable_cache=False) #output_materializers=PillowImageMaterializer)
+@step(enable_cache=False)
 def create_pytorch_dataset(params: DonutTrainParams,
     model: VisionEncoderDecoderModel,
     processor: DonutProcessor) -> Output(
         train_dataloader=DataLoader,
         val_dataloader=DataLoader
-        #model_input_sample=Image,
     ):
 
-    dataset = load_dataset(params.dataset)
-    train_data = dataset['train']
-    train_sharded_data = train_data.shard(num_shards=28, index=0)
-    print("train sharded_data:",train_sharded_data)
-    val_data = dataset['validation']
-    val_sharded_data = val_data.shard(num_shards=10, index=0)
+    train_dataset = load_dataset(params.dataset, split='train')
+    val_dataset = load_dataset(params.dataset, split='validation')
 
-    # model_input_sample = val_data[2]['image']
-
-    train_dataset = DonutDataset(train_sharded_data, model=model, processor=processor,
+    train_dataset = DonutDataset(train_dataset, model=model, processor=processor,
                     max_length=params.max_length, split="train", 
                     task_start_token=params.task_start_token,
                     prompt_end_token=params.task_end_token,
                     sort_json_key=False
                     )
-    val_dataset = DonutDataset(val_sharded_data, model=model, processor=processor,
+    val_dataset = DonutDataset(val_dataset, model=model, processor=processor,
                     max_length=params.max_length, split="validation", 
                     task_start_token=params.task_start_token,
                     prompt_end_token=params.task_end_token,
@@ -193,7 +183,7 @@ def create_pytorch_dataset(params: DonutTrainParams,
     val_dataloader = DataLoader(val_dataset, batch_size=params.batch_size, shuffle=True,
                               num_workers=params.num_workers)
   
-    return train_dataloader, val_dataloader #,model_input_sample
+    return train_dataloader, val_dataloader
 
 
 
