@@ -54,5 +54,5 @@ class ModelSaveDeployParams(BaseParameters):
     timeout = 60
     model_save_path = "ChequeParserDonutModel"
     processor_save_path = "ChequeParserDonutProcessor"
-    hf_trained_model_save_repo = "shivi/donut-base-cheque-1"
+    hf_trained_model_save_repo = "shivi/cheques_model"
     min_accuracy = 0.6

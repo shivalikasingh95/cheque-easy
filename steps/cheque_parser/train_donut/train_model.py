@@ -10,13 +10,12 @@ from pytorch_lightning.loggers import MLFlowLogger
 from zenml.integrations.mlflow.mlflow_utils import get_tracking_uri
 from zenml.integrations.mlflow.flavors.mlflow_experiment_tracker_flavor import MLFlowExperimentTrackerSettings
 from .mlflow_pyfunc import DonutModel
-from PIL.Image import Image
-# from mlflow.models.signature import infer_signature
 from mlflow.models.signature import ModelSignature
 from mlflow.types.schema import Schema, ColSpec
 import mlflow
 import os, pathlib
 import pytorch_lightning as pl
+from .create_pt_dataset import DonutDataset
 
 experiment_tracker = Client().active_stack.experiment_tracker
 
@@ -97,15 +96,40 @@ class PushToHubCallback(Callback):
 def train_evaluate_donut(params: DonutTrainParams,
                 processor: DonutProcessor,
                 model: VisionEncoderDecoderModel,
-                train_dataloader: DataLoader,
-                val_dataloader: DataLoader
-                # model_input_sample: Image
-                ) -> Dict:
+                # train_dataloader: DataLoader,
+                # val_dataloader: DataLoader
+                ) --> Output(trained_model=VisionEncoderDecoderModel,
+                processor_donut=DonutProcessor): #> Dict:
+
+    train_dataset = load_dataset(params.dataset, split='train[0:30]')
+    val_dataset = load_dataset(params.dataset, split='validation[0:20]')
+
+    train_dataset = DonutDataset(train_dataset, model=model, processor=processor,
+                               max_length=params.max_length, 
+                               split="train", task_start_token=params.task_start_token,
+                               prompt_end_token=params.task_end_token,
+                               sort_json_key=False,
+                               )
+    val_dataset = DonutDataset(val_dataset, model=model, processor=processor,
+                                max_length=params.max_length, 
+                                split="validation", task_start_token=params.task_start_token,
+                                prompt_end_token=params.task_end_token,
+                                sort_json_key=False,
+                                )
+
+    model.config.pad_token_id = processor.tokenizer.pad_token_id
+    model.config.decoder_start_token_id = processor.tokenizer.convert_tokens_to_ids(["<s_cord-v2>"])[0]
+
+    print("Pad token ID:", processor.decode([model.config.pad_token_id]))
+    print("Decoder start token ID:", processor.decode([model.config.decoder_start_token_id]))
 
     model_module = DonutModelPLModule(params, processor, model)
 
-    # processor.save_pretrained(PROCESSOR_SAVE_PATH)
-    # model.save_pretrained(MODEL_SAVE_PATH)
+    train_dataloader = DataLoader(train_dataset, batch_size=params.batch_size, shuffle=True,
+                                num_workers=params.num_workers)
+  
+    val_dataloader = DataLoader(val_dataset, batch_size=params.batch_size, shuffle=True,
+                              num_workers=params.num_workers)
 
     trainer = pl.Trainer(
         accelerator=params.accelerator,
@@ -122,15 +146,7 @@ def train_evaluate_donut(params: DonutTrainParams,
 
     trainer.fit(model_module, train_dataloaders=train_dataloader, val_dataloaders=val_dataloader)
 
-    
-    #artifacts={ pathlib.Path(file).stem: os.path.join(MODEL_SAVE_PATH, file) 
-    #            for file in os.listdir(MODEL_SAVE_PATH) 
-    #            if not os.path.basename(file).startswith('.') }
-    
-    # mlflow.pyfunc.log_model(MODEL_SAVE_PATH, 
-    #                         python_model=DonutModel(), 
-    #                         artifacts=artifacts, 
-    #                         signature=signature,
-    #                         registered_model_name='donut-cheques-model',
-    #                         conda_env=conda_env)
-    return {"message": "training_complete"}
+    trained_model = model_module.model
+    processor_donut = model_module.processor
+
+    return trained_model, processor_donut #{"message": "training_complete"}

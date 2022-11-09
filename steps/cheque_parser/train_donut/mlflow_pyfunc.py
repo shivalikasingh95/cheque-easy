@@ -64,7 +64,5 @@ class DonutModel(PythonModel):
         cleaned_cheque_details = re.sub(r"<.*?>", "", extracted_cheque_details, count=1).strip()  
         ## generate ordered json sequence from output token sequence
         cheque_details_json = self.processor.token2json(cleaned_cheque_details)
-        
-        # cheque_details_str = json.dumps(cheque_details_json)
 
         return cheque_details_json

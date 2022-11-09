@@ -13,7 +13,7 @@ def train_donut_pipeline(
     load_config, 
     load_processor,
     load_model, 
-    create_pytorch_dataset,
+    # create_pytorch_dataset,
     train_donut_model,
     evaluator,
     deployment_trigger,
@@ -23,12 +23,12 @@ def train_donut_pipeline(
     config = load_config()
     processor = load_processor()
     model = load_model(vis_enc_dec_config=config, donut_processor=processor)
-    train_dataloader, val_dataloader = create_pytorch_dataset(processor=processor, model=model)
-    artifacts = train_donut_model(processor=processor, model=model,
-                                    train_dataloader=train_dataloader,
-                                    val_dataloader=val_dataloader
+    # train_dataloader, val_dataloader = create_pytorch_dataset(processor=processor, model=model)
+    trained_model, donut_processor = train_donut_model(processor=processor, model=model
+                                    # train_dataloader=train_dataloader,
+                                    # val_dataloader=val_dataloader
     )
 
-    accuracy = evaluator(artifacts)
-    deployment_decision = deployment_trigger(accuracy)
-    model_deployer(deployment_decision, artifacts)
+    accuracy = evaluator(trained_model, donut_processor)
+    # deployment_decision = deployment_trigger(accuracy)
+    # model_deployer(deployment_decision, artifacts)

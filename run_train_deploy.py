@@ -70,22 +70,22 @@ train_pipeline = train_donut_pipeline(
     
     load_model=load_vision_encoder_decoder_model(donut_train_params),
     
-    create_pytorch_dataset=create_pytorch_dataset(donut_train_params),
+    # create_pytorch_dataset=create_pytorch_dataset(donut_train_params),
     
     train_donut_model=train_evaluate_donut(donut_train_params),
 
     evaluator=evaluate(donut_train_params),
 
-    deployment_trigger=deployment_trigger(
-            config=DeploymentTriggerConfig(
-                min_accuracy=model_params.min_accuracy,
-            )
-        ),
-    model_deployer=mlflow_model_deployer_step(
-        params=MLFlowDeployerParameters(workers=model_params.workers,
-                experiment_name=model_params.mlflow_experiment_name,
-                model_name=model_params.mlflow_model_name,
-                timeout=model_params.timeout))
+    # deployment_trigger=deployment_trigger(
+    #         config=DeploymentTriggerConfig(
+    #             min_accuracy=model_params.min_accuracy,
+    #         )
+    #     ),
+    # model_deployer=mlflow_model_deployer_step(
+    #     params=MLFlowDeployerParameters(workers=model_params.workers,
+    #             experiment_name=model_params.mlflow_experiment_name,
+    #             model_name=model_params.mlflow_model_name,
+    #             timeout=model_params.timeout))
 
 )
 
