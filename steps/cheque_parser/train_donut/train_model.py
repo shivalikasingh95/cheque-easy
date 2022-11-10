@@ -112,10 +112,11 @@ def train_evaluate_donut(params: DonutTrainParams,
                 model: VisionEncoderDecoderModel
                 ) -> Dict:
 
-    ## load donut 
+    ## load dataset from HF Hub containing cheque images and corresponding ground_truth (GT)
     train_dataset = load_dataset(params.dataset, split='train').shuffle()
     val_dataset = load_dataset(params.dataset, split='validation').shuffle()
-
+    
+    ## create training and validation dataset converting images to tensor form and GT to input_ids
     train_dataset = DonutDataset(train_dataset, model=model, processor=processor,
                                max_length=params.max_length, 
                                split="train", task_start_token=params.task_start_token,
@@ -129,20 +130,28 @@ def train_evaluate_donut(params: DonutTrainParams,
                                 sort_json_key=False,
                                 )
 
+    ## set `pad_token_id` and `decoder_start_token_id` so that the `decoder_input_ids` can be created automatically
     model.config.pad_token_id = processor.tokenizer.pad_token_id
     model.config.decoder_start_token_id = processor.tokenizer.convert_tokens_to_ids([params.task_start_token])[0]
 
+    # `pad_token_id` should be <PAD>
     print("Pad token ID:", processor.decode([model.config.pad_token_id]))
+
+    # `decoder_start_token_id` value should be equal to prompt for starting IE task i.e. value of `task_start_token` defined 
+    # under DonutTrainParams() in params.py file 
     print("Decoder start token ID:", processor.decode([model.config.decoder_start_token_id]))
 
+    ## Initialize Pytorch-lightning training module
     model_module = DonutModelPLModule(params, processor, model)
 
+    ## create train and val dataloaders
     train_dataloader = DataLoader(train_dataset, batch_size=params.batch_size, shuffle=True,
                                 num_workers=params.num_workers)
   
     val_dataloader = DataLoader(val_dataset, batch_size=params.batch_size, shuffle=True,
                               num_workers=params.num_workers)
 
+    ## create Pytorch-Lightning Trainer 
     trainer = pl.Trainer(
         accelerator=params.accelerator,
         devices=params.device_num,
@@ -156,8 +165,7 @@ def train_evaluate_donut(params: DonutTrainParams,
         callbacks=[LoggingArtifactsCallback()],
     )
 
+    # start training model
     trainer.fit(model_module, train_dataloaders=train_dataloader, val_dataloaders=val_dataloader)
 
-    trained_model = model_module.model
-
-    return trained_model
+    return {"message": "training_complete"}

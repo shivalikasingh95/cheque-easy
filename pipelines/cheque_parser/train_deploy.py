@@ -13,7 +13,7 @@ def train_donut_pipeline(
     load_processor,
     load_model, 
     train_donut_model,
-    evaluator
+    evaluator,
     deployment_trigger,
     model_deployer
 ):
