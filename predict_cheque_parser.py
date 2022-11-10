@@ -1,4 +1,4 @@
-from utils.donut_utils import load_donut_model_and_processor, prepare_data_using_processor
+from utils.donut_utils import load_donut_model_and_processor, prepare_data_using_processor, load_image
 import pkg_resources
 from symspellpy import SymSpell
 from word2number import w2n
@@ -10,11 +10,15 @@ import re
 CHEQUE_PARSER_MODEL = "shivi/donut-cheque-parser"
 TASK_PROMPT = "<parse-cheque>"
 
+
+
 def parse_cheque_with_donut(input_image_path):
+
+    image = load_image(input_image_path)
 
     donut_processor, model = load_donut_model_and_processor(CHEQUE_PARSER_MODEL)
 
-    cheque_image_tensor, input_for_decoder = prepare_data_using_processor(donut_processor,input_image_path,TASK_PROMPT)
+    cheque_image_tensor, input_for_decoder = prepare_data_using_processor(donut_processor,image,TASK_PROMPT)
     
     outputs = model.generate(cheque_image_tensor,
                                 decoder_input_ids=input_for_decoder,

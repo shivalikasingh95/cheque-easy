@@ -21,6 +21,6 @@ def train_donut_pipeline(
     processor = load_processor()
     model = load_model(vis_enc_dec_config=config)
     artifacts = train_donut_model(processor=processor, model=model)
-    accuracy = evaluator(trained_model)
+    accuracy = evaluator(artifacts)
     deployment_decision = deployment_trigger(accuracy)
     model_deployer(deployment_decision, artifacts)

@@ -14,9 +14,8 @@ def load_donut_model_and_processor(trained_model_repo):
     model.to(device)
     return donut_processor, model
 
-def prepare_data_using_processor(donut_processor,image_path,task_prompt):
+def prepare_data_using_processor(donut_processor,image,task_prompt):
     ## Pass image through donut processor's feature extractor and retrieve image tensor
-    image = load_image(image_path)
     pixel_values = donut_processor(image, return_tensors="pt").pixel_values
     pixel_values = pixel_values.to(device)
 

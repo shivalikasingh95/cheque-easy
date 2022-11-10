@@ -22,8 +22,8 @@ import mlflow
 ## other imports
 from params import DonutTrainParams, ModelSaveDeployParams
 from .mlflow_pyfunc import DonutModel
-from .utils.create_pt_dataset import DonutDataset
-from .utils.donut_pl_module import DonutModelPLModule
+from utils.create_pt_dataset import DonutDataset
+from utils.donut_pl_module import DonutModelPLModule
 
 from typing import Dict
 

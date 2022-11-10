@@ -20,7 +20,7 @@ def load_vision_encoder_decoder_model(
         model (PreTrainedModel): pretrained model which will be used for fine-tuning 
     """
 
-    model = VisionEncoderDecoderModel.from_pretrained(params.pretrained_ckpt, config=config)
+    model = VisionEncoderDecoderModel.from_pretrained(params.pretrained_ckpt, config=vis_enc_dec_config)
     
     return model
 
