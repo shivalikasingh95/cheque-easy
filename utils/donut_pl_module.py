@@ -6,7 +6,7 @@ import math
 import torch
 from torch.nn.utils.rnn import pad_sequence
 from torch.optim.lr_scheduler import LambdaLR
-
+import mlflow
 import pytorch_lightning as pl
 from pytorch_lightning.utilities import rank_zero_only
 
@@ -22,7 +22,9 @@ class DonutModelPLModule(pl.LightningModule):
         pixel_values, labels, _ = batch
         outputs = self.model(pixel_values, labels=labels)
         loss = outputs.loss
-        self.log_dict({"train_loss": loss}, sync_dist=True)
+        # self.log_dict({"train_loss": loss}, sync_dist=True)
+        ## Use MLflow for logging metrics
+        mlflow.log_metric("train_loss", loss.tolist())
         return loss
 
     def validation_step(self, batch, batch_idx, dataset_idx=0):
@@ -79,8 +81,10 @@ class DonutModelPLModule(pl.LightningModule):
                 total_metric[i] += np.sum(scores)
             val_metric[i] = total_metric[i] / cnt[i]
             val_metric_name = f"val_metric_{i}th_dataset"
-            self.log_dict({val_metric_name: val_metric[i]}, sync_dist=True)
-        self.log_dict({"val_metric": np.sum(total_metric) / np.sum(cnt)}, sync_dist=True)
+            # self.log_dict({val_metric_name: val_metric[i]}, sync_dist=True)
+            mlflow.log_metric(val_metric_name, val_metric[i])
+        # self.log_dict({"val_metric": np.sum(total_metric) / np.sum(cnt)}, sync_dist=True)
+        mlflow.log_metric("val_metric", np.sum(total_metric) / np.sum(cnt))
 
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=self.config.lr)
