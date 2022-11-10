@@ -103,8 +103,8 @@ def train_evaluate_donut(params: DonutTrainParams,
                 ) -> PreTrainedModel: #Output(trained_model=PreTrainedModel,
                 # processor_donut=DonutProcessor): #> Dict:
 
-    train_dataset = load_dataset(params.dataset, split='train[0:30]')
-    val_dataset = load_dataset(params.dataset, split='validation[0:20]')
+    train_dataset = load_dataset(params.dataset, split='train').shuffle()
+    val_dataset = load_dataset(params.dataset, split='validation').shuffle()
 
     train_dataset = DonutDataset(train_dataset, model=model, processor=processor,
                                max_length=params.max_length, 

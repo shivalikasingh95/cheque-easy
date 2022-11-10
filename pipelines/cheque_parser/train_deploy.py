@@ -24,11 +24,11 @@ def train_donut_pipeline(
     processor = load_processor()
     model = load_model(vis_enc_dec_config=config, donut_processor=processor)
     # train_dataloader, val_dataloader = create_pytorch_dataset(processor=processor, model=model)
-    trained_model, donut_processor = train_donut_model(processor=processor, model=model
+    trained_model, processor = train_donut_model(processor=processor, model=model
                                     # train_dataloader=train_dataloader,
                                     # val_dataloader=val_dataloader
     )
 
-    accuracy = evaluator(trained_model, donut_processor)
+    accuracy = evaluator(trained_model)
     # deployment_decision = deployment_trigger(accuracy)
     # model_deployer(deployment_decision, artifacts)

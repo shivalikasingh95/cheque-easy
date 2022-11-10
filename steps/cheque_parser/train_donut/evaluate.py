@@ -28,16 +28,16 @@ EXPERIMENT_NAME = model_params.mlflow_experiment_name
     }
 )
 def evaluate(params: DonutTrainParams,
-        # trained_model_artifacts: Dict) 
-        model: VisionEncoderDecoderModel,
-        donut_processor: DonutProcessor) -> float:
+        trained_model_artifacts: Dict) -> float:
+        # model: VisionEncoderDecoderModel,
+        # donut_processor: DonutProcessor) 
    output_list = []
    accs = []
 
-   dataset = load_dataset(params.dataset, split="validation[10:20]")
+   dataset = load_dataset(params.dataset, split="validation").shuffle()
 
-#    model = VisionEncoderDecoderModel.from_pretrained(model_params.hf_trained_model_save_repo)
-#    donut_processor = DonutProcessor.from_pretrained(model_params.hf_trained_model_save_repo)
+   model = VisionEncoderDecoderModel.from_pretrained(model_params.hf_trained_model_save_repo)
+   donut_processor = DonutProcessor.from_pretrained(model_params.hf_trained_model_save_repo)
 
    device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -45,8 +45,8 @@ def evaluate(params: DonutTrainParams,
    model.to(device)
 
 
-   #for idx, sample in enumerate(dataset):
-   for idx in range(0,3):
+   for idx, sample in enumerate(dataset):
+   #for idx in range(0,3):
 
     sample = dataset[idx]
     image = sample["image"].convert("RGB")
