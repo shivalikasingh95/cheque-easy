@@ -6,7 +6,7 @@ from io import BytesIO
 import json
 import re
 
-TASK_PROMPT = "<s_cord-v2>"
+TASK_PROMPT = "<parse-cheque>"
 
 class DonutModel(PythonModel):
     def load_context(self, context: PythonModelContext):
@@ -17,8 +17,6 @@ class DonutModel(PythonModel):
         from transformers import DonutProcessor, VisionEncoderDecoderModel
         
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        print('context.artifacts["sentencepiece.bpe"]:' , context.artifacts["donut_processor"])
-        print('context.artifacts["pytorch_model"]:', context.artifacts["donut_model"])
 
         self.processor = DonutProcessor.from_pretrained(context.artifacts["donut_processor"])
         self.model = VisionEncoderDecoderModel.from_pretrained(context.artifacts["donut_model"])

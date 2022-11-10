@@ -56,3 +56,4 @@ class ModelSaveDeployParams(BaseParameters):
     processor_save_path = "ChequeParserDonutProcessor"
     hf_trained_model_save_repo = "shivi/cheques_model"
     min_accuracy = 0.6
+    mlflow_registered_model_name = 'donut-cheques-model'

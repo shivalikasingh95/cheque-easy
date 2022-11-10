@@ -28,13 +28,11 @@ EXPERIMENT_NAME = model_params.mlflow_experiment_name
     }
 )
 def evaluate(params: DonutTrainParams,
-        trained_model_artifacts: Dict) -> float:
-        # model: VisionEncoderDecoderModel,
-        # donut_processor: DonutProcessor) 
+        trained_model_artifacts: Dict) -> float: 
    output_list = []
    accs = []
 
-   dataset = load_dataset(params.dataset, split="validation").shuffle()
+   dataset = load_dataset(params.dataset, split="test")
 
    model = VisionEncoderDecoderModel.from_pretrained(model_params.hf_trained_model_save_repo)
    donut_processor = DonutProcessor.from_pretrained(model_params.hf_trained_model_save_repo)
@@ -46,7 +44,6 @@ def evaluate(params: DonutTrainParams,
 
 
    for idx, sample in enumerate(dataset):
-   #for idx in range(0,3):
 
     sample = dataset[idx]
     image = sample["image"].convert("RGB")

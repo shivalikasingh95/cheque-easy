@@ -2,23 +2,18 @@ import json
 import random
 from typing import Any, List, Tuple
 import torch
-from torch.utils.data import Dataset,DataLoader
-from datasets import DatasetDict, load_dataset
-from zenml.steps import step, Output
-from params import DonutTrainParams
-from transformers import VisionEncoderDecoderModel, DonutProcessor
-from zenml.integrations.pillow.materializers import PillowImageMaterializer
-from PIL.Image import Image
+from torch.utils.data import Dataset
 
 added_tokens = []
 
+# Below code is referred from https://github.com/NielsRogge/Transformers-Tutorials/blob/master/Donut/CORD/Fine_tune_Donut_on_a_custom_dataset_(CORD)_with_PyTorch_Lightning.ipynb
 class DonutDataset(Dataset):
     """
     DonutDataset which is saved in huggingface datasets format. (see details in https://huggingface.co/docs/datasets)
     Each row, consists of image path(png/jpg/jpeg) and gt data (json/jsonl/txt),
     and it will be converted into input_tensor(vectorized image) and input_ids(tokenized string).
     Args:
-        dataset_name_or_path: name of dataset (available at huggingface.co/datasets) or the path containing image files and metadata.jsonl
+        dataset: dataset which needs to be converted
         max_length: the max number of tokens for the target sequences
         split: whether to load "train", "validation" or "test" split
         ignore_id: ignore_index for torch.nn.CrossEntropyLoss
@@ -50,8 +45,6 @@ class DonutDataset(Dataset):
         self.prompt_end_token = prompt_end_token if prompt_end_token else task_start_token
         self.sort_json_key = sort_json_key
         self.dataset = dataset
-
-        # self.dataset = load_dataset(dataset_name_or_path, split=self.split)
         self.dataset_length = len(self.dataset)
 
         self.gt_token_sequences = []
@@ -151,39 +144,6 @@ class DonutDataset(Dataset):
         labels[labels == self.processor.tokenizer.pad_token_id] = self.ignore_id  # model doesn't need to predict pad token
         # labels[: torch.nonzero(labels == self.prompt_end_token_id).sum() + 1] = self.ignore_id  # model doesn't need to predict prompt (for VQA)
         return pixel_values, labels, target_sequence
-
-
-@step(enable_cache=False)
-def create_pytorch_dataset(params: DonutTrainParams,
-    model: VisionEncoderDecoderModel,
-    processor: DonutProcessor) -> Output(
-        train_dataloader=DataLoader,
-        val_dataloader=DataLoader
-    ):
-
-    train_dataset = load_dataset(params.dataset, split='train')
-    val_dataset = load_dataset(params.dataset, split='validation')
-
-    train_dataset = DonutDataset(train_dataset, model=model, processor=processor,
-                    max_length=params.max_length, split="train", 
-                    task_start_token=params.task_start_token,
-                    prompt_end_token=params.task_end_token,
-                    sort_json_key=False
-                    )
-    val_dataset = DonutDataset(val_dataset, model=model, processor=processor,
-                    max_length=params.max_length, split="validation", 
-                    task_start_token=params.task_start_token,
-                    prompt_end_token=params.task_end_token,
-                    sort_json_key=False
-                    )
-
-    train_dataloader = DataLoader(train_dataset, batch_size=params.batch_size, shuffle=True,
-                                num_workers=params.num_workers)
-
-    val_dataloader = DataLoader(val_dataset, batch_size=params.batch_size, shuffle=True,
-                              num_workers=params.num_workers)
-  
-    return train_dataloader, val_dataloader
 
 
 
