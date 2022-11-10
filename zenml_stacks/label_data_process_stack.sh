@@ -1,4 +1,4 @@
-# zenml stack register $ANNOT_STACK_NAME -o default -a default
+zenml stack register $ANNOT_STACK_NAME -o default -a default
 zenml stack set $ANNOT_STACK_NAME
 zenml secrets-manager register azure_secret_mgr2 --key_vault_name=$AZURE_KEY_VAULT -f azure
 

@@ -1,4 +1,4 @@
-from predict_cheque_parser import (
+from utils.donut_utils import (
     prepare_data_using_processor
 )
 from zenml.integrations.mlflow.flavors.mlflow_experiment_tracker_flavor import (
@@ -28,11 +28,11 @@ EXPERIMENT_NAME = model_params.mlflow_experiment_name
     }
 )
 def evaluate(params: DonutTrainParams,
-        trained_model_artifacts: Dict) -> float:
+        trained_model_artifacts: Dict) -> float: 
    output_list = []
    accs = []
 
-   dataset = load_dataset(params.dataset, split="validation")
+   dataset = load_dataset(params.dataset, split="test")
 
    model = VisionEncoderDecoderModel.from_pretrained(model_params.hf_trained_model_save_repo)
    donut_processor = DonutProcessor.from_pretrained(model_params.hf_trained_model_save_repo)
@@ -43,13 +43,12 @@ def evaluate(params: DonutTrainParams,
    model.to(device)
 
 
-   #for idx, sample in enumerate(dataset):
-   for idx in range(0,3):
+   for idx, sample in enumerate(dataset):
 
     sample = dataset[idx]
     image = sample["image"].convert("RGB")
 
-    cheque_image_tensor, input_for_decoder = prepare_data_using_processor(donut_processor,image)
+    cheque_image_tensor, input_for_decoder = prepare_data_using_processor(donut_processor,image, params.task_start_token)
     
     outputs = model.generate(cheque_image_tensor,
                                 decoder_input_ids=input_for_decoder,

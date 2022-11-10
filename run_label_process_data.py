@@ -44,6 +44,7 @@ from zenml.integrations.label_studio.steps import (
 )
 
 from params import DataParams, AnnotationParams
+import os
 
 LABEL_CHOICE = "label"
 GET_LABELLED_DATA_CHOICE = 'get_labelled_data'
@@ -84,7 +85,8 @@ azure_data_sync = sync_new_data_to_label_studio(
 def get_azure_images_uri(params: AnnotationParams) -> Output(
     azure_images_uri=str,
     predictions=List[Dict[str, Any]]):
-    return params.images_uri, []
+    images_uri = os.environ['LABEL_DATA_STORAGE_BUCKET_NAME']
+    return images_uri, []
 
 
 ## define pipelines to run

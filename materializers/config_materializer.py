@@ -16,14 +16,12 @@ class DonutConfigMaterializer(BaseMaterializer):
     def handle_input(self, data_type: Type[VisionEncoderDecoderConfig]) -> VisionEncoderDecoderConfig:
         """Read from artifact store"""
         super().handle_input(data_type)
-        print("os.path.join(self.artifact.uri, DEFAULT_CONFIG_DIR):",os.path.join(self.artifact.uri, DEFAULT_CONFIG_DIR))
         # temp_dir = TemporaryDirectory()
         # io_utils.copy_dir(
         #   os.path.join(self.artifact.uri, DEFAULT_CONFIG_DIR),
         #   temp_dir.name
         # )
         return VisionEncoderDecoderConfig.from_pretrained(
-          # temp_dir.name
           os.path.join(self.artifact.uri, DEFAULT_CONFIG_DIR)
         )
 
@@ -32,7 +30,7 @@ class DonutConfigMaterializer(BaseMaterializer):
         super().handle_return(model_config)
         temp_dir = TemporaryDirectory()
         model_config.save_pretrained(temp_dir.name)
-        print("temp_dir.name:", os.path.abspath(temp_dir.name))
+        
         io_utils.copy_dir(
           temp_dir.name,
           os.path.join(self.artifact.uri, DEFAULT_CONFIG_DIR), 

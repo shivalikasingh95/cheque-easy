@@ -7,7 +7,6 @@ class AnnotationParams(BaseParameters):
     cheque_parser_label_project = "cheque_parser"
     cheque_parser_labels = ["payee_name","bank_name","amt_in_words","amt_in_figures","cheque_date"]
     export_format = "JSON"
-    images_uri = "az://zenml3-zenmlartifactstore/data/batch1"
 
 class DataParams(BaseParameters):
     annotation_file_path = "../cheques_dataset/cheques_label_file.csv"
@@ -24,11 +23,11 @@ class DonutTrainParams(BaseParameters):
     dataset = "shivi/cheques_sample_data"
     image_size = [960, 720] # image size for encoder
     max_length = 768 # decoder seq length
-    task_start_token="<s_cord-v2>"
-    task_end_token="<s_cord-v2>"
+    task_start_token="<parse-cheque>"
+    task_end_token="<parse-cheque>"
     
     batch_size = 1
-    num_workers = 1
+    num_workers = 4
     epochs = 1
     max_epochs = 1
     val_check_interval = 0.2 # how many times we want to validate during an epoch
@@ -54,5 +53,6 @@ class ModelSaveDeployParams(BaseParameters):
     timeout = 60
     model_save_path = "ChequeParserDonutModel"
     processor_save_path = "ChequeParserDonutProcessor"
-    hf_trained_model_save_repo = "shivi/donut-base-cheque-1"
+    hf_trained_model_save_repo = "shivi/cheques_model"
     min_accuracy = 0.6
+    mlflow_registered_model_name = 'donut-cheques-model'

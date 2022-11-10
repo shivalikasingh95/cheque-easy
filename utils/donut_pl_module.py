@@ -10,7 +10,7 @@ from torch.optim.lr_scheduler import LambdaLR
 import pytorch_lightning as pl
 from pytorch_lightning.utilities import rank_zero_only
 
-
+# Below code is referred from https://github.com/NielsRogge/Transformers-Tutorials/blob/master/Donut/CORD/Fine_tune_Donut_on_a_custom_dataset_(CORD)_with_PyTorch_Lightning.ipynb 
 class DonutModelPLModule(pl.LightningModule):
     def __init__(self, config, processor, model):
         super().__init__()

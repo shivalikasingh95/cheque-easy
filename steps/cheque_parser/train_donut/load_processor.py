@@ -1,4 +1,4 @@
-from .materializers.donut_processor_materializer import HFDonutMaterializer
+from materializers.donut_processor_materializer import HFDonutMaterializer
 from transformers import DonutProcessor
 from params import DonutTrainParams
 from zenml.steps import step

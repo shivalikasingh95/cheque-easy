@@ -1,9 +1,8 @@
 from zenml.steps import step, BaseParameters
 
 class DeploymentTriggerConfig(BaseParameters):
-    """Parameters that are used to trigger the deployment"""
+    """Parameters that are used to trigger deployment of trained model"""
 
-    #deploy: bool = True
     min_accuracy: float = 0.8
 
 
@@ -12,7 +11,9 @@ def deployment_trigger(
     mean_accuracy: float,
     config: DeploymentTriggerConfig,
 ) -> bool:
-    """Implements a simple model deployment trigger that looks at the
-    input model accuracy and decides if it is good enough to deploy"""
+    """ 
+    simple model deployment trigger that compares mean accuracy obtained on test set
+    after model evaluation with the set min threshold value for model accuracy
+    """
 
-    return mean_accuracy > config.min_accuracy #config.deploy
+    return mean_accuracy > config.min_accuracy 
