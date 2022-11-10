@@ -1,4 +1,4 @@
-from predict_cheque_parser import (
+from utils.donut_utils import (
     prepare_data_using_processor
 )
 from zenml.integrations.mlflow.flavors.mlflow_experiment_tracker_flavor import (
@@ -48,7 +48,7 @@ def evaluate(params: DonutTrainParams,
     sample = dataset[idx]
     image = sample["image"].convert("RGB")
 
-    cheque_image_tensor, input_for_decoder = prepare_data_using_processor(donut_processor,image)
+    cheque_image_tensor, input_for_decoder = prepare_data_using_processor(donut_processor,image, params.task_start_token)
     
     outputs = model.generate(cheque_image_tensor,
                                 decoder_input_ids=input_for_decoder,

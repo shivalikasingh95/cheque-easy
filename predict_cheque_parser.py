@@ -1,47 +1,20 @@
-from transformers import DonutProcessor, VisionEncoderDecoderModel
+from utils.donut_utils import load_donut_model_and_processor, prepare_data_using_processor
 import pkg_resources
 from symspellpy import SymSpell
 from word2number import w2n
 from dateutil import relativedelta
 from datetime import datetime
 from word2number import w2n
-from textblob import Word
-from PIL import Image
-import torch
 import re
 
 CHEQUE_PARSER_MODEL = "shivi/donut-cheque-parser"
 TASK_PROMPT = "<parse-cheque>"
-device = "cuda" if torch.cuda.is_available() else "cpu"
-
-def load_donut_model_and_processor():
-    donut_processor = DonutProcessor.from_pretrained(CHEQUE_PARSER_MODEL)
-    model = VisionEncoderDecoderModel.from_pretrained(CHEQUE_PARSER_MODEL)
-    model.to(device)
-    return donut_processor, model
-
-def prepare_data_using_processor(donut_processor,image_path):
-    ## Pass image through donut processor's feature extractor and retrieve image tensor
-    image = load_image(image_path)
-    print("type image:", type(image))
-    pixel_values = donut_processor(image, return_tensors="pt").pixel_values
-    pixel_values = pixel_values.to(device)
-
-    ## Pass task prompt for document (cheque) parsing task to donut processor's tokenizer and retrieve the input_ids
-    decoder_input_ids = donut_processor.tokenizer(TASK_PROMPT, add_special_tokens=False, return_tensors="pt")["input_ids"]
-    decoder_input_ids = decoder_input_ids.to(device)
-
-    return pixel_values, decoder_input_ids
-
-def load_image(image_path):
-    image = Image.open(image_path).convert("RGB")
-    return image
 
 def parse_cheque_with_donut(input_image_path):
 
-    donut_processor, model = load_donut_model_and_processor()
+    donut_processor, model = load_donut_model_and_processor(CHEQUE_PARSER_MODEL)
 
-    cheque_image_tensor, input_for_decoder = prepare_data_using_processor(donut_processor,input_image_path)
+    cheque_image_tensor, input_for_decoder = prepare_data_using_processor(donut_processor,input_image_path,TASK_PROMPT)
     
     outputs = model.generate(cheque_image_tensor,
                                 decoder_input_ids=input_for_decoder,

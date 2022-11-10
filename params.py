@@ -7,7 +7,6 @@ class AnnotationParams(BaseParameters):
     cheque_parser_label_project = "cheque_parser"
     cheque_parser_labels = ["payee_name","bank_name","amt_in_words","amt_in_figures","cheque_date"]
     export_format = "JSON"
-    images_uri = "az://zenml3-zenmlartifactstore/data/batch1"
 
 class DataParams(BaseParameters):
     annotation_file_path = "../cheques_dataset/cheques_label_file.csv"

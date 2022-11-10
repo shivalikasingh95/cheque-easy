@@ -1,6 +1,6 @@
 from transformers import VisionEncoderDecoderConfig
 from params import DonutTrainParams
-from .materializers.config_materializer import DonutConfigMaterializer
+from materializers.config_materializer import DonutConfigMaterializer
 from zenml.steps import step
 
 @step(enable_cache=False,output_materializers=DonutConfigMaterializer)
