@@ -88,7 +88,7 @@ class PushToHubCallback(Callback):
 # @step(experiment_tracker="wandb_tracker")
 # @step(experiment_tracker=experiment_tracker.name)
 
-@step(enable_cache=False,output_materializers=HFDonutMaterializer, experiment_tracker=experiment_tracker.name,
+@step(enable_cache=False,experiment_tracker=experiment_tracker.name,
     settings={
         "experiment_tracker.mlflow": MLFlowExperimentTrackerSettings(
             experiment_name=EXPERIMENT_NAME,
@@ -100,8 +100,8 @@ def train_evaluate_donut(params: DonutTrainParams,
                 model: VisionEncoderDecoderModel,
                 # train_dataloader: DataLoader,
                 # val_dataloader: DataLoader
-                ) -> Output(trained_model=PreTrainedModel,
-                processor_donut=DonutProcessor): #> Dict:
+                ) -> PreTrainedModel: #Output(trained_model=PreTrainedModel,
+                # processor_donut=DonutProcessor): #> Dict:
 
     train_dataset = load_dataset(params.dataset, split='train[0:30]')
     val_dataset = load_dataset(params.dataset, split='validation[0:20]')
@@ -120,7 +120,7 @@ def train_evaluate_donut(params: DonutTrainParams,
                                 )
 
     model.config.pad_token_id = processor.tokenizer.pad_token_id
-    model.config.decoder_start_token_id = processor.tokenizer.convert_tokens_to_ids(["<s_cord-v2>"])[0]
+    model.config.decoder_start_token_id = processor.tokenizer.convert_tokens_to_ids([params.task_start_token])[0]
 
     print("Pad token ID:", processor.decode([model.config.pad_token_id]))
     print("Decoder start token ID:", processor.decode([model.config.decoder_start_token_id]))
@@ -149,6 +149,5 @@ def train_evaluate_donut(params: DonutTrainParams,
     trainer.fit(model_module, train_dataloaders=train_dataloader, val_dataloaders=val_dataloader)
 
     trained_model = model_module.model
-    processor_donut = model_module.processor
 
-    return trained_model, processor_donut #{"message": "training_complete"}
+    return trained_model #, processor_donut #{"message": "training_complete"}
