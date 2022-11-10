@@ -14,4 +14,4 @@ mysqlclient
 nltk
 word2number
 gradio
-textblob
+symspellpy

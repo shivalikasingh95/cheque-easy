@@ -1,4 +1,6 @@
 from transformers import DonutProcessor, VisionEncoderDecoderModel
+import pkg_resources
+from symspellpy import SymSpell
 from word2number import w2n
 from dateutil import relativedelta
 from datetime import datetime
@@ -8,8 +10,8 @@ from PIL import Image
 import torch
 import re
 
-CHEQUE_PARSER_MODEL = "shivi/donut-base-cheque"
-TASK_PROMPT = "<s_cord-v2>"
+CHEQUE_PARSER_MODEL = "shivi/donut-cheque-parser"
+TASK_PROMPT = "<parse-cheque>"
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 def load_donut_model_and_processor():
@@ -18,9 +20,10 @@ def load_donut_model_and_processor():
     model.to(device)
     return donut_processor, model
 
-def prepare_data_using_processor(donut_processor: DonutProcessor, image):
+def prepare_data_using_processor(donut_processor,image_path):
     ## Pass image through donut processor's feature extractor and retrieve image tensor
-    
+    image = load_image(image_path)
+    print("type image:", type(image))
     pixel_values = donut_processor(image, return_tensors="pt").pixel_values
     pixel_values = pixel_values.to(device)
 
@@ -30,18 +33,15 @@ def prepare_data_using_processor(donut_processor: DonutProcessor, image):
 
     return pixel_values, decoder_input_ids
 
-def load_image(image_path: str):
+def load_image(image_path):
     image = Image.open(image_path).convert("RGB")
     return image
 
-def parse_cheque_with_donut(input_image_path: str):
-
-    image = load_image(input_image_path)
-    print("type image:", type(image))
+def parse_cheque_with_donut(input_image_path):
 
     donut_processor, model = load_donut_model_and_processor()
 
-    cheque_image_tensor, input_for_decoder = prepare_data_using_processor(donut_processor,image)
+    cheque_image_tensor, input_for_decoder = prepare_data_using_processor(donut_processor,input_image_path)
     
     outputs = model.generate(cheque_image_tensor,
                                 decoder_input_ids=input_for_decoder,
@@ -71,40 +71,48 @@ def parse_cheque_with_donut(input_image_path: str):
     macthing_amts = match_legal_and_courstesy_amount(amt_in_words,amt_in_figures)
     
     payee_name = cheque_details_json['cheque_details'][2]['payee_name']
-    cheque_date = '06/05/2022'
+
+    bank_name = cheque_details_json['cheque_details'][3]['bank_name']
+    cheque_date = cheque_details_json['cheque_details'][4]['cheque_date']
+
     stale_cheque = check_if_cheque_is_stale(cheque_date)
 
-    return payee_name,amt_in_words,amt_in_figures,cheque_date,macthing_amts,stale_cheque
+    return payee_name,amt_in_words,amt_in_figures,bank_name,cheque_date,macthing_amts,stale_cheque
 
-def spell_correction(amt_in_words: str) -> str:
-    corrected_amt_in_words =''
-    words = amt_in_words.split()
-    words = [word.lower() for word in words]
-    for word in words:
-        word = Word(word)
-        corrected_word = word.correct()+' '
-        corrected_amt_in_words += corrected_word
-    return corrected_amt_in_words
+def spell_check(amt_in_words):
+    sym_spell = SymSpell(max_dictionary_edit_distance=2,prefix_length=7)
+    dictionary_path = pkg_resources.resource_filename("symspellpy", "frequency_dictionary_82_765.txt")
+    bigram_path = pkg_resources.resource_filename("symspellpy", "frequency_bigramdictionary_en_243_342.txt")
 
-def match_legal_and_courstesy_amount(legal_amount: str ,courtesy_amount: str) -> bool:
+    sym_spell.load_dictionary(dictionary_path, term_index=0, count_index=1)
+    sym_spell.load_bigram_dictionary(bigram_path, term_index=0, count_index=2)
+
+    suggestions = sym_spell.lookup_compound(amt_in_words, max_edit_distance=2)
+
+    return suggestions[0].term
+
+def match_legal_and_courstesy_amount(legal_amount,courtesy_amount):
     macthing_amts = False
-    corrected_amt_in_words = spell_correction(legal_amount)
+    if len(legal_amount) == 0:
+        return macthing_amts
+
+    corrected_amt_in_words = spell_check(legal_amount)
     print("corrected_amt_in_words:",corrected_amt_in_words)
+    
     numeric_legal_amt = w2n.word_to_num(corrected_amt_in_words)
     print("numeric_legal_amt:",numeric_legal_amt)
     if int(numeric_legal_amt) == int(courtesy_amount):
         macthing_amts = True
     return macthing_amts
 
-def check_if_cheque_is_stale(cheque_issue_date: str) -> bool:
+def check_if_cheque_is_stale(cheque_issue_date):
     stale_check = False
-    current_date = datetime.now().strftime('%d/%m/%Y')
-    current_date_ = datetime.strptime(current_date, "%d/%m/%Y")
-    cheque_issue_date_ = datetime.strptime(cheque_issue_date, "%d/%m/%Y")
+    current_date = datetime.now().strftime('%d/%m/%y')
+    current_date_ = datetime.strptime(current_date, "%d/%m/%y")
+    cheque_issue_date_ = datetime.strptime(cheque_issue_date, "%d/%m/%y")
     relative_diff = relativedelta.relativedelta(current_date_, cheque_issue_date_)
     months_difference = (relative_diff.years * 12) + relative_diff.months
     print("months_difference:",months_difference)
     if months_difference > 3:
         stale_check = True
     return stale_check
-
