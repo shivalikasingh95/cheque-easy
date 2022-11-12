@@ -11,7 +11,6 @@ import pandas as pd
 def encode_pil_to_base64(pil_image):
     with BytesIO() as output_bytes:
 
-        # Copy any text-only metadata
         use_metadata = False
         metadata = PngImagePlugin.PngInfo()
         for key, value in pil_image.info.items():

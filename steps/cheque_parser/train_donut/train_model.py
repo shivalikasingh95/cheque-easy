@@ -75,7 +75,7 @@ class LoggingArtifactsCallback(Callback):
         ## save processor and push to Hugging Face Hub
         donut_pl_module.processor.push_to_hub(MODEL_REPO,
                                     commit_message=TRAIN_END_COMMIT_MSG_PROCESSOR)
-        donut_pl_module.processor.save_pretrained(MODEL_SAVE_PATH)
+        donut_pl_module.processor.save_pretrained(PROCESSOR_SAVE_PATH)
 
         # save trained model and push to Hugging Face Hub
         donut_pl_module.model.save_pretrained(MODEL_SAVE_PATH)
@@ -161,7 +161,7 @@ def train_evaluate_donut(params: DonutTrainParams,
         gradient_clip_val=params.gradient_clip_val,
         precision=params.precision, 
         num_sanity_val_steps=0,
-        logger=mlf_logger,
+        # logger=mlf_logger,
         callbacks=[LoggingArtifactsCallback()],
     )
 

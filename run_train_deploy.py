@@ -6,11 +6,12 @@ from zenml.integrations.mlflow.model_deployers.mlflow_model_deployer import (
     MLFlowModelDeployer,
 )
 
-## load pipelines for cheque parser module
+## import pipelines for cheque parser module
 from pipelines.cheque_parser.data_postprocess import data_postprocess
 from pipelines.cheque_parser.train_deploy import train_donut_pipeline
 from pipelines.cheque_parser.inference_pipeline import inference_pipeline
 
+## import steps for inference pipeline
 from steps.cheque_parser.inference.load_data import import_inference_data
 from steps.cheque_parser.inference.load_prediction_service import (
 	prediction_service_loader,
@@ -18,6 +19,7 @@ from steps.cheque_parser.inference.load_prediction_service import (
 )
 from steps.cheque_parser.inference.predict import predictor
 
+## import steps for training pipeline
 from steps.cheque_parser.train_donut.load_config import load_model_config 
 from steps.cheque_parser.train_donut.load_processor import load_donut_processor
 from steps.cheque_parser.train_donut.load_model import load_vision_encoder_decoder_model
@@ -25,7 +27,7 @@ from steps.cheque_parser.train_donut.train_model import train_evaluate_donut
 from steps.cheque_parser.train_donut.evaluate import evaluate
 from steps.cheque_parser.train_donut.deployment_trigger import deployment_trigger, DeploymentTriggerConfig
 
-## load steps for dataset processing for cheque parser module
+## import steps for dataset processing pipeline
 from steps.cheque_parser.data_postprocess.import_and_clean import import_clean_data
 from steps.cheque_parser.data_postprocess.split_data import split_data
 from steps.cheque_parser.data_postprocess.create_metadata import (

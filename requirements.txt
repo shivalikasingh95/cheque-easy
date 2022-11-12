@@ -1,9 +1,8 @@
 git+https://github.com/shivalikasingh95/transformers.git@image_utils_fix 
 datasets 
 sentencepiece 
-zenml 
-pytorch-lightning 
-wandb
+git+https://github.com/shivalikasingh95/zenml.git@label_studio_ocr_config
+pytorch-lightning
 "zenml[server]"
 mlflow
 label-studio

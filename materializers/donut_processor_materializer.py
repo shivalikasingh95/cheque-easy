@@ -20,7 +20,6 @@ class HFDonutMaterializer(BaseMaterializer):
         #   temp_dir.name
         # )
         return DonutProcessor.from_pretrained(
-          # temp_dir.name
           os.path.join(self.artifact.uri, DEFAULT_PROCESSOR_DIR)
         )
 
