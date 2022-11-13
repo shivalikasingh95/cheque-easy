@@ -1,8 +1,13 @@
 # ChequeEasy: Banking with Transformers
 
-ChequeEasy is a project that aims to simplify the process of approval of cheques. It leverages recent advances in the domain of Visual Document Understanding (VDU) to extract relevant data from cheques and make the whole process easier and quicker for both bank officials and customers. 
+ChequeEasy is a project that aims to simplify the process of approval of bank cheques and make it easier and quicker for both bank officials and customers. 
 
-This project uses Donut model proposed in the paper [OCR-free Document Understanding Transformer](https://arxiv.org/abs/2111.15664) for the parsing of the required data from cheques. Donut is based on a very simple transformer encoder and decoder architecture. It's main USP is that it is an **OCR-free approach** to visual document understanding. OCR based techniques come with several limitations such as requiring use of additional downstream models, lack of understanding about document structure, requiring use of hand crafted rules, etc. Donut helps you get rid of all of these OCR specific limitations. 
+The core of the project is **Donut** (**Do**cument **Un**derstanding **T**ransformer) which was proposed in the paper [OCR-free Document Understanding Transformer](https://arxiv.org/abs/2111.15664) and is used for parsing required data from cheques. Donut is based on a very simple transformer encoder and decoder architecture. It's main USP is that it is an **OCR-free approach** to Visual Document Understanding (VDU). OCR based techniques come with several limitations such as requiring use of additional downstream models, lack of understanding about document structure, requiring use of hand crafted rules, etc. Donut helps you get rid of all of these OCR specific limitations. 
+
+This project is not limited to fine-tuning Donut but is an end-to-end solution from labeling to inference. Pipelines have been created to cover different aspects of the MLOps lifecycle of this project i.e. data processing including annotation, model training, deployment and inference. Both the pipelines and the underlying infrastructure (stacks) to run those pipelines have been setup using the **ZenML** MLOps framework!
+
+The project leverages **Label Studio** for _annotation_ and **MLflow** for _experiment tracking_ as well as _model deployment_!
+The model has been fine tuned with the help of **Hugging Face** _transformers_ and _datasets_ library!
 
 The model for the project has been trained using a subset of this [Kaggle dataset](https://www.kaggle.com/datasets/medali1992/cheque-images). The original dataset contains images of cheques from 10 different banks. A filtered version of this dataset containing images of cheques from 4 banks that are more commonly found in the Indian Banking Sector was created along with corresponding ground truth. This [dataset](https://huggingface.co/datasets/shivi/cheques_sample_data) is available on the Hugging Face Hub for download.
 
