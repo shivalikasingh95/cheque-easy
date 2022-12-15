@@ -35,9 +35,6 @@ from zenml.integrations.label_studio.steps.label_studio_standard_steps import (
 )
 
 ## sync create storage related imports
-from zenml.integrations.label_studio.label_config_generators import (
-    generate_image_classification_label_config,
-)
 from zenml.integrations.label_studio.steps import (
     LabelStudioDatasetSyncParameters,
     sync_new_data_to_label_studio,
@@ -59,7 +56,7 @@ CHEQUE_PARSER_LABELS = annot_params.cheque_parser_labels
 ## fetch active stack's annotator component (label studio)
 annotator = Client().active_stack.annotator
 
-## get labelling config for object detection task
+## get labelling config for OCR labelling task
 bbox_label_config, label_config_type = generate_basic_ocr_label_config(CHEQUE_PARSER_LABELS) 
 
 ## get label studio project creation registration parameters
