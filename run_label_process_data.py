@@ -57,11 +57,11 @@ CHEQUE_PARSER_LABELS = annot_params.cheque_parser_labels
 annotator = Client().active_stack.annotator
 
 ## get labelling config for OCR labelling task
-bbox_label_config, label_config_type = generate_basic_ocr_label_config(CHEQUE_PARSER_LABELS) 
+ocr_label_config, label_config_type = generate_basic_ocr_label_config(CHEQUE_PARSER_LABELS) 
 
 ## get label studio project creation registration parameters
 label_studio_registration_params = LabelStudioDatasetRegistrationParameters(
-    label_config=bbox_label_config,
+    label_config=ocr_label_config,
     dataset_name=annot_params.cheque_parser_label_project,
 )
 
